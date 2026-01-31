@@ -88,7 +88,7 @@ export function DailyCheckin({ onSuccess }: DailyCheckinProps) {
 
   return (
     <Button
-      onClick={handleCheckin}
+      onClick={handleCheckIn}
       disabled={isLoading || hasCheckedIn}
       className="w-full"
       variant={hasCheckedIn ? "secondary" : "default"}
