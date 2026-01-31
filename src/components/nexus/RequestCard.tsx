@@ -329,10 +329,53 @@ export function RequestCard({
     return `${diffHours}h restantes`;
   };
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikes(liked ? likes - 1 : likes + 1);
-    onLike?.();
+const handleLike = async () => {
+    if (!user) {
+      toast({
+        title: "Inicia sesión",
+        description: "Debes iniciar sesión para dar me gusta",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      if (liked) {
+        // Unlike: delete the like from database
+        const { error } = await supabase
+          .from('likes')
+          .delete()
+          .eq('solicitud_id', id)
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+
+        setIsLiked(false);
+        setLikes(likes - 1);
+      } else {
+        // Like: insert into database
+        const { error } = await supabase
+          .from('likes')
+          .insert({
+            solicitud_id: id,
+            user_id: user.id
+          });
+
+        if (error) throw error;
+
+        setIsLiked(true);
+        setLikes(likes + 1);
+      }
+      
+      onLike?.();
+    } catch (error: any) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo dar me gusta",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleComment = () => {
