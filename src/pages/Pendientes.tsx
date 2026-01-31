@@ -56,7 +56,7 @@ const Pendientes = () => {
           comentarios (id),
           respuestas (id)
         `)
-        .eq("is_resolved", false)
+        .eq("status", "activa")
         .order("created_at", { ascending: false })
         .range(offset, offset + ITEMS_PER_PAGE - 1);
 
