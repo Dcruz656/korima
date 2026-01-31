@@ -229,7 +229,7 @@ export default function Auth() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-auth-background flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
@@ -261,7 +261,7 @@ export default function Auth() {
 
 
   return (
-    <div className="min-h-screen bg-auth-background overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 overflow-hidden relative">
       {/* Subtle Background Pattern */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Soft gradient orbs */}
