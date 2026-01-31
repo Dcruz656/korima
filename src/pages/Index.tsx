@@ -459,7 +459,7 @@ const Index = () => {
                           userId={solicitud.user_id}
                           description={solicitud.description || undefined}
                           author={{
-                            name: solicitud.profiles?.full_name || "Usuario",
+                            titulo: solicitud.profiles?.full_name || "Usuario",
                             level: (solicitud.profiles?.level as Level) || "novato",
                             avatar: solicitud.profiles?.avatar_url || undefined,
                           }}
