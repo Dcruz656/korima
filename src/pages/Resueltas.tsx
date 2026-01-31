@@ -56,7 +56,7 @@ const Resueltas = () => {
           comentarios (id),
           respuestas (id)
         `)
-        .eq("is_resolved", true)
+        .eq("status", "completada")
         .order("created_at", { ascending: false })
         .range(offset, offset + ITEMS_PER_PAGE - 1);
 
