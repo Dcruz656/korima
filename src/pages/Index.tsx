@@ -31,7 +31,7 @@ import {
 interface Solicitud {
   id: string;
   user_id: string;
-  title: string;
+  titulo: string;
   description: string | null;
   category: string;
   doi: string | null;
@@ -127,7 +127,7 @@ const Index = () => {
 
       if (error || !data) {
         toast({
-          title: "Solicitud no encontrada",
+          titulo: "Solicitud no encontrada",
           description: "La solicitud ya no existe o fue eliminada",
           variant: "destructive",
         });
@@ -215,7 +215,7 @@ const Index = () => {
     } catch (error) {
       console.error("Error fetching solicitudes:", error);
       toast({
-        title: "Error",
+        titulo: "Error",
         description: "No se pudieron cargar las solicitudes",
         variant: "destructive",
       });
@@ -234,7 +234,7 @@ const Index = () => {
   const handleLike = async (solicitudId: string, isLiked: boolean) => {
     if (!user) {
       toast({
-        title: "Inicia sesión",
+        titulo: "Inicia sesión",
         description: "Debes iniciar sesión para dar me gusta",
         variant: "destructive",
       });
@@ -455,7 +455,7 @@ const Index = () => {
                       >
                         <RequestCard
                           id={solicitud.id}
-                          title={solicitud.title}
+                          title={solicitudtitulo:.titulo}
                           userId={solicitud.user_id}
                           description={solicitud.description || undefined}
                           author={{
