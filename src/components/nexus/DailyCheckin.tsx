@@ -30,15 +30,18 @@ export function DailyCheckin({ onSuccess }: DailyCheckinProps) {
 
   const hasCheckedIn = !canCheckin();
 
-  const handleCheckin = async () => {
-    if (!user || !profile) {
-      toast({
-        title: "Error",
-        description: "Debes iniciar sesión para hacer check-in",
-        variant: "destructive",
-      });
-      return;
-    }
+  const handleCheckIn = async () => {
+        // Verificar sesión de Supabase primero
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+                toast({
+                          title: "Error",
+                          description: "Debes iniciar sesión para hacer check-in",
+                          variant: "destructive",
+                        });
+                return;
+              }
 
     if (!canCheckin()) {
       toast({
