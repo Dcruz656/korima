@@ -350,7 +350,7 @@ const handleLike = async () => {
 
         if (error) throw error;
 
-        setIsLiked(false);
+        setLiked(false);
         setLikes(likes - 1);
       } else {
         // Like: insert into database
@@ -363,7 +363,7 @@ const handleLike = async () => {
 
         if (error) throw error;
 
-        setIsLiked(true);
+        setLiked(true);
         setLikes(likes + 1);
       }
       
