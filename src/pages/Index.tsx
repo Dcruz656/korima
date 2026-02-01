@@ -191,7 +191,9 @@ const Index = () => {
           comentarios:comentarios!comentarios_solicitud_id_fkey (id),
           respuestas:respuestas!fk_respuestas_solicitud (id)
         `)
-        .order("created_at", { ascending: false })
+        .eq("user_id", user?.id)
+  
+    
         .range(offset, offset + ITEMS_PER_PAGE - 1);
 
       if (solicitudesError) throw solicitudesError;
