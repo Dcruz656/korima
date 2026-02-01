@@ -113,6 +113,12 @@ export function RequestCard({
   // Hook para verificar Open Access
   const openAccessInfo = useOpenAccessCheck(doi);
 
+  // Sincronizar estado local cuando cambian los props desde el padre
+  useEffect(() => {
+    setLiked(isLiked);
+    setLikes(likesCount);
+  }, [isLiked, likesCount]);
+
   // Check if already saved on mount
   useEffect(() => {
     if (user) {
