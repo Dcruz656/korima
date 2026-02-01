@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,7 +7,6 @@
 /* Kórima Design System - Facebook-inspired Style
    Colors: Facebook Blue, Clean whites, Subtle grays */
 
-@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
