@@ -456,11 +456,11 @@ if (solicitudesError) throw solicitudesError;
                       >
                         <RequestCard
                           id={solicitud.id}
-                          title={solicitudtitulo:.titulo}
+                          title={solicitud.titulo}
                           userId={solicitud.user_id}
                           description={solicitud.description || undefined}
                           author={{
-                            titulo: solicitud.profiles?.full_name || "Usuario",
+                            name: solicitud.profiles?.full_name || "Usuario",
                             level: (solicitud.profiles?.level as Level) || "novato",
                             avatar: solicitud.profiles?.avatar_url || undefined,
                           }}
