@@ -476,7 +476,7 @@ if (solicitudesError) throw solicitudesError;
                           responsesCount={solicitud.respuestas.length}
                           createdAt={formatTimeAgo(solicitud.created_at)}
                           isLiked={isLiked}
-                          onLike={() => handleLike(solicitud.id, isLiked)}
+                          onLike={() => fetchSolicitudes(true)}
                           onRefresh={() => fetchSolicitudes(true)}
                         />
                       </div>
