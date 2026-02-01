@@ -184,19 +184,18 @@ const Index = () => {
       const offset = isInitial ? 0 : solicitudes.length;
 
       const { data: solicitudesData, error: solicitudesError } = await supabase
-        .from("solicitudes")
-        .select(`
-          *,
-          likes:likes!likes_solicitud_id_fkey (user_id),
-          comentarios:comentarios!comentarios_solicitud_id_fkey (id),
-          respuestas:respuestas!fk_respuestas_solicitud (id)
-        `)
-        .eq("user_id", user?.id)
-  
-    
-        .range(offset, offset + ITEMS_PER_PAGE - 1);
+  .from("solicitudes")
+  .select(`
+    *,
+    likes:likes!likes_solicitud_id_fkey (user_id),
+    comentarios:comentarios!comentarios_solicitud_id_fkey (id),
+    respuestas:respuestas!fk_respuestas_solicitud (id)
+  `)
+  .eq("user_id", user?.id)  // ⬅️ AGREGA ESTA LÍNEA AQUÍ
+  .order("created_at", { ascending: false })
+  .range(offset, offset + ITEMS_PER_PAGE - 1);
 
-      if (solicitudesError) throw solicitudesError;
+if (solicitudesError) throw solicitudesError;
 
       // Verificar si hay más resultados
       setHasMore((solicitudesData?.length || 0) === ITEMS_PER_PAGE);
