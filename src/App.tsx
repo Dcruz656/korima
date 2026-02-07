@@ -83,6 +83,7 @@ function AppRoutes() {
         <Route path="/perfil/:userId" element={<Perfil />} />
         <Route path="/pendientes" element={<Pendientes />} />
         <Route path="/resueltas" element={<Resueltas />} />
+        <Route path="/mis-solicitudes" element={<MisSolicitudes />} />
         <Route
           path="/admin/dashboard"
           element={
