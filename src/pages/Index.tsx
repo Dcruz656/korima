@@ -181,24 +181,16 @@ const Index = () => {
         setLoadingMore(true);
       }
 
-      if (!user) {
-        setSolicitudes([]);
-        setLoading(false);
-        setLoadingMore(false);
-        return;
-      }
-
       const offset = isInitial ? 0 : solicitudes.length;
 
       const { data: solicitudesData, error: solicitudesError } = await supabase
         .from("solicitudes")
         .select(`
-    *,
-    likes:likes!likes_solicitud_id_fkey (user_id),
-    comentarios:comentarios!comentarios_solicitud_id_fkey (id),
-    respuestas:respuestas!fk_respuestas_solicitud (id)
-  `)
-        .eq("user_id", user?.id)
+          *,
+          likes:likes!likes_solicitud_id_fkey (user_id),
+          comentarios:comentarios!comentarios_solicitud_id_fkey (id),
+          respuestas:respuestas!fk_respuestas_solicitud (id)
+        `)
         .order("created_at", { ascending: false })
         .range(offset, offset + ITEMS_PER_PAGE - 1);
 
