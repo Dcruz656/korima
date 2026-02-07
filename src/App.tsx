@@ -18,6 +18,7 @@ import Grupos from "./pages/Grupos";
 import Perfil from "./pages/Perfil";
 import Pendientes from "./pages/Pendientes";
 import Resueltas from "./pages/Resueltas";
+import MisSolicitudes from "./pages/MisSolicitudes";
 import AdminDashboard from "./pages/AdminDashboard";
 import Politicas from "./pages/Politicas";
 import NotFound from "./pages/NotFound";
@@ -27,15 +28,15 @@ const queryClient = new QueryClient();
 // Component to protect admin routes
 function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
-  
+
   if (!profile) {
     return <Navigate to="/auth" replace />;
   }
-  
+
   if (profile.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
-  
+
   return <>{children}</>;
 }
 
@@ -48,10 +49,10 @@ function OAuthRedirectHandler({ children }: { children: React.ReactNode }) {
     // Check for OAuth tokens in URL hash or query params
     const hash = window.location.hash;
     const searchParams = new URLSearchParams(window.location.search);
-    
+
     const hasOAuthTokens = hash && (
-      hash.includes("access_token") || 
-      hash.includes("refresh_token") || 
+      hash.includes("access_token") ||
+      hash.includes("refresh_token") ||
       hash.includes("error")
     );
     const hasAuthCallback = searchParams.get("code") || searchParams.get("error");
@@ -82,13 +83,13 @@ function AppRoutes() {
         <Route path="/perfil/:userId" element={<Perfil />} />
         <Route path="/pendientes" element={<Pendientes />} />
         <Route path="/resueltas" element={<Resueltas />} />
-        <Route 
-          path="/admin/dashboard" 
+        <Route
+          path="/admin/dashboard"
           element={
             <ProtectedAdminRoute>
               <AdminDashboard />
             </ProtectedAdminRoute>
-          } 
+          }
         />
         <Route path="/politicas" element={<Politicas />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

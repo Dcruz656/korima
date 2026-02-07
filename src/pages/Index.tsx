@@ -52,7 +52,7 @@ interface Solicitud {
 }
 
 const sidebarLinks = [
-  { icon: FileText, label: "Mis Solicitudes", href: "/" },
+  { icon: FileText, label: "Mis Solicitudes", href: "/mis-solicitudes" },
   { icon: Inbox, label: "Mi Buzón", href: "/buzon" },
   { icon: AlertCircle, label: "Ver Pendientes", href: "/pendientes" },
   { icon: CheckCircle, label: "Ver Resueltas", href: "/resueltas" },
