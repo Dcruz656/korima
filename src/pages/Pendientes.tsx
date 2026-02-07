@@ -8,12 +8,12 @@ import { Loader2, AlertCircle } from "lucide-react";
 interface Solicitud {
   id: string;
   user_id: string;
-  title: string;
-  description: string | null;
-  category: string;
+  titulo: string;
+  descripcion: string | null;
+  categoria: string;
   doi: string | null;
-  is_urgent: boolean;
-  is_resolved: boolean;
+  status: string;
+  puntos_ofrecidos: number;
   created_at: string;
   profiles: {
     full_name: string | null;
@@ -50,12 +50,7 @@ const Pendientes = () => {
 
       const { data: solicitudesData, error: solicitudesError } = await supabase
         .from("solicitudes")
-        .select(`
-          *,
-          likes (user_id),
-          comentarios (id),
-          respuestas (id)
-        `)
+        .select("*")
         .eq("status", "activa")
         .order("created_at", { ascending: false })
         .range(offset, offset + ITEMS_PER_PAGE - 1);
@@ -68,10 +63,36 @@ const Pendientes = () => {
       const userIds = [...new Set(solicitudesData?.map(s => s.user_id) || [])];
       const profilesMap = await fetchProfilesCached(userIds);
 
-      const enrichedData = solicitudesData?.map(s => ({
-        ...s,
-        profiles: profilesMap.get(s.user_id) || null
-      })) || [];
+      // Obtener conteos para cada solicitud
+      const enrichedData = await Promise.all(
+        (solicitudesData || []).map(async (solicitud) => {
+          // Contar likes
+          const { count: likesCount } = await supabase
+            .from("likes")
+            .select("*", { count: "exact", head: true })
+            .eq("solicitud_id", solicitud.id);
+
+          // Contar comentarios
+          const { count: commentsCount } = await supabase
+            .from("comentarios")
+            .select("*", { count: "exact", head: true })
+            .eq("solicitud_id", solicitud.id);
+
+          // Contar respuestas
+          const { count: responsesCount } = await supabase
+            .from("respuestas")
+            .select("*", { count: "exact", head: true })
+            .eq("solicitud_id", solicitud.id);
+
+          return {
+            ...solicitud,
+            profiles: profilesMap.get(solicitud.user_id) || null,
+            likes: Array(likesCount || 0).fill({ user_id: "" }),
+            comentarios: Array(commentsCount || 0).fill({ id: "" }),
+            respuestas: Array(responsesCount || 0).fill({ id: "" }),
+          };
+        })
+      );
 
       if (isInitial) {
         setSolicitudes(enrichedData as Solicitud[]);
@@ -137,23 +158,23 @@ const Pendientes = () => {
                   <CompactRequestCard
                     key={solicitud.id}
                     id={solicitud.id}
-                    title={solicitud.title}
+                    title={solicitud.titulo}
                     userId={solicitud.user_id}
                     author={{
                       name: solicitud.profiles?.full_name || "Usuario",
                       level: (solicitud.profiles?.level as "novato" | "colaborador" | "experto" | "maestro" | "leyenda") || "novato",
                       avatar: solicitud.profiles?.avatar_url || undefined,
                     }}
-                    category={solicitud.category}
-                    isUrgent={solicitud.is_urgent}
-                    isResolved={solicitud.is_resolved}
+                    category={solicitud.categoria}
+                    status={solicitud.status}
+                    puntosOfrecidos={solicitud.puntos_ofrecidos}
                     likesCount={solicitud.likes.length}
                     commentsCount={solicitud.comentarios.length}
                     responsesCount={solicitud.respuestas.length}
                     createdAt={formatTimeAgo(solicitud.created_at)}
                   />
                 ))}
-                
+
                 {hasMore && (
                   <button
                     onClick={() => fetchSolicitudes(false)}
