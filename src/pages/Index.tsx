@@ -191,7 +191,6 @@ const Index = () => {
     comentarios:comentarios!comentarios_solicitud_id_fkey (id),
     respuestas:respuestas!fk_respuestas_solicitud (id)
   `)
-  .eq("user_id", user?.id)  // ⬅️ AGREGA ESTA LÍNEA AQUÍ
   .order("created_at", { ascending: false })
   .range(offset, offset + ITEMS_PER_PAGE - 1);
 
