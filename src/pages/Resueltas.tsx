@@ -8,12 +8,12 @@ import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 interface Solicitud {
   id: string;
   user_id: string;
-  title: string;
-  description: string | null;
-  category: string;
+  titulo: string;
+  descripcion: string | null;
+  categoria: string;
   doi: string | null;
-  is_urgent: boolean;
-  is_resolved: boolean;
+  status: string;
+  puntos_ofrecidos: number;
   created_at: string;
   profiles: {
     full_name: string | null;
@@ -169,16 +169,16 @@ const Resueltas = () => {
                   <CompactRequestCard
                     key={solicitud.id}
                     id={solicitud.id}
-                    title={solicitud.title}
+                    title={solicitud.titulo}
                     userId={solicitud.user_id}
                     author={{
                       name: solicitud.profiles?.full_name || "Usuario",
                       level: (solicitud.profiles?.level as "novato" | "colaborador" | "experto" | "maestro" | "leyenda") || "novato",
                       avatar: solicitud.profiles?.avatar_url || undefined,
                     }}
-                    category={solicitud.category}
-                    isUrgent={solicitud.is_urgent}
-                    isResolved={solicitud.is_resolved}
+                    category={solicitud.categoria}
+                    status={solicitud.status}
+                    puntosOfrecidos={solicitud.puntos_ofrecidos}
                     likesCount={solicitud.likes.length}
                     commentsCount={solicitud.comentarios.length}
                     responsesCount={solicitud.respuestas.length}

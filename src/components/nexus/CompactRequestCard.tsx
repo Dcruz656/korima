@@ -13,8 +13,11 @@ interface CompactRequestCardProps {
     avatar?: string;
   };
   category: string;
-  isUrgent?: boolean;
-  isResolved?: boolean;
+  status?: string;
+  puntosOfrecidos?: number;
+  // Deprecated/Legacy props (optional for backward compatibility if needed, but we'll remove them as per instructions for this file)
+  // isUrgent?: boolean; 
+  // isResolved?: boolean;
   likesCount: number;
   commentsCount: number;
   responsesCount: number;
@@ -36,8 +39,8 @@ export function CompactRequestCard({
   userId,
   author,
   category,
-  isUrgent = false,
-  isResolved = false,
+  status,
+  puntosOfrecidos,
   likesCount,
   commentsCount,
   responsesCount,
@@ -45,6 +48,9 @@ export function CompactRequestCard({
   onClick,
 }: CompactRequestCardProps) {
   const navigate = useNavigate();
+
+  const isResolved = status === "completada";
+  const isUrgent = false; // logic for urgent based on points or status if needed, defaulting to false for now as per instructions "Eliminar isUrgent"
 
   const handleClick = () => {
     if (onClick) {
@@ -55,13 +61,13 @@ export function CompactRequestCard({
   };
 
   return (
-    <article 
+    <article
       onClick={handleClick}
       className="card-fb p-3 cursor-pointer hover:bg-secondary/30 transition-colors"
     >
       <div className="flex items-start gap-3">
         {/* Avatar */}
-        <div 
+        <div
           onClick={(e) => {
             e.stopPropagation();
             navigate(`/perfil/${userId}`);
@@ -86,8 +92,8 @@ export function CompactRequestCard({
             {/* Status indicator */}
             <div className={cn(
               "flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1",
-              isResolved 
-                ? "bg-green-500/10 text-green-600" 
+              isResolved
+                ? "bg-green-500/10 text-green-600"
                 : "bg-amber-500/10 text-amber-600"
             )}>
               {isResolved ? (
@@ -106,7 +112,7 @@ export function CompactRequestCard({
 
           {/* Meta row */}
           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-            <span 
+            <span
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/perfil/${userId}`);
