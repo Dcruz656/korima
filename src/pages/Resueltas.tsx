@@ -3,7 +3,7 @@ import { Navigation } from "@/components/nexus/Navigation";
 import { CompactRequestCard } from "@/components/nexus/CompactRequestCard";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchProfilesCached } from "@/hooks/useProfilesCache";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
 interface Solicitud {
   id: string;
@@ -30,6 +30,7 @@ const Resueltas = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const ITEMS_PER_PAGE = 20;
 
@@ -41,12 +42,14 @@ const Resueltas = () => {
     try {
       if (isInitial) {
         setLoading(true);
+        setError(null);
         setSolicitudes([]);
       } else {
         setLoadingMore(true);
       }
 
       const offset = isInitial ? 0 : solicitudes.length;
+      console.log("Fetching solicitudes resueltas...", { isInitial, offset });
 
       const { data: solicitudesData, error: solicitudesError } = await supabase
         .from("solicitudes")
@@ -54,18 +57,29 @@ const Resueltas = () => {
           *,
           likes (user_id),
           comentarios (id),
-          respuestas (id)
+          respuestas:respuestas!solicitud_id (id)
         `)
         .eq("status", "completada")
         .order("created_at", { ascending: false })
         .range(offset, offset + ITEMS_PER_PAGE - 1);
 
-      if (solicitudesError) throw solicitudesError;
+      if (solicitudesError) {
+        console.error("Supabase error fetching solicitudes:", solicitudesError);
+        throw solicitudesError;
+      }
+
+      console.log("Raw solicitudes data:", solicitudesData);
+
+      if (!solicitudesData || solicitudesData.length === 0) {
+        console.log("No data returned from query");
+      }
 
       setHasMore((solicitudesData?.length || 0) === ITEMS_PER_PAGE);
 
       // Fetch profiles with caching
       const userIds = [...new Set(solicitudesData?.map(s => s.user_id) || [])];
+
+      console.log("Fetching profiles for User IDs:", userIds);
       const profilesMap = await fetchProfilesCached(userIds);
 
       const enrichedData = solicitudesData?.map(s => ({
@@ -73,13 +87,16 @@ const Resueltas = () => {
         profiles: profilesMap.get(s.user_id) || null
       })) || [];
 
+      console.log("Enriched data:", enrichedData);
+
       if (isInitial) {
         setSolicitudes(enrichedData as Solicitud[]);
       } else {
         setSolicitudes(prev => [...prev, ...(enrichedData as Solicitud[])]);
       }
-    } catch (error) {
-      console.error("Error fetching solicitudes:", error);
+    } catch (error: any) {
+      console.error("Error fetching solicitudes (catch block):", error);
+      setError(error.message || "Error desconocido al cargar las solicitudes");
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -120,6 +137,21 @@ const Resueltas = () => {
 
           {/* Content */}
           <div className="space-y-2">
+            {error && (
+              <div className="card-fb p-4 border-destructive/50 bg-destructive/10 text-destructive mb-4">
+                <div className="flex items-center gap-2 font-semibold">
+                  <AlertCircle className="w-5 h-5" />
+                  <h4>Error al cargar</h4>
+                </div>
+                <p className="text-sm mt-1 opacity-90">{error}</p>
+                <button
+                  onClick={() => fetchSolicitudes(true)}
+                  className="mt-3 text-xs font-semibold hover:underline"
+                >
+                  Intentar de nuevo
+                </button>
+              </div>
+            )}
             {loading ? (
               <div className="card-fb p-8 flex justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -153,7 +185,7 @@ const Resueltas = () => {
                     createdAt={formatTimeAgo(solicitud.created_at)}
                   />
                 ))}
-                
+
                 {hasMore && (
                   <button
                     onClick={() => fetchSolicitudes(false)}
