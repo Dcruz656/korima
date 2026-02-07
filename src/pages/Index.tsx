@@ -181,6 +181,13 @@ const Index = () => {
         setLoadingMore(true);
       }
 
+      if (!user) {
+        setSolicitudes([]);
+        setLoading(false);
+        setLoadingMore(false);
+        return;
+      }
+
       const offset = isInitial ? 0 : solicitudes.length;
 
       const { data: solicitudesData, error: solicitudesError } = await supabase
