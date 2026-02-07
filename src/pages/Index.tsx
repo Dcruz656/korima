@@ -11,12 +11,12 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchProfilesCached } from "@/hooks/useProfilesCache";
 import { LevelProgress } from "@/components/nexus/LevelProgress";
 import type { Level } from "@/components/nexus/LevelBadge";
-import { 
-  FileText, 
-  Smile, 
-  Users, 
-  Bookmark, 
-  Clock, 
+import {
+  FileText,
+  Smile,
+  Users,
+  Bookmark,
+  Clock,
   TrendingUp,
   ChevronDown,
   ChevronUp,
@@ -71,7 +71,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
-  
+
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -88,9 +88,9 @@ const Index = () => {
     const solicitudId = searchParams.get("solicitud");
     if (solicitudId && !loading) {
       setHighlightedSolicitudId(solicitudId);
-      
+
       const exists = solicitudes.some(s => s.id === solicitudId);
-      
+
       if (exists) {
         setTimeout(() => {
           const element = solicitudRefs.current.get(solicitudId);
@@ -98,11 +98,11 @@ const Index = () => {
             element.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         }, 100);
-        
+
         setTimeout(() => {
           setSearchParams({}, { replace: true });
         }, 500);
-        
+
         setTimeout(() => {
           setHighlightedSolicitudId(null);
         }, 3000);
@@ -136,7 +136,7 @@ const Index = () => {
       }
 
       const profilesMap = await fetchProfilesCached([data.user_id]);
-      
+
       const enrichedSolicitud = {
         ...data,
         profiles: profilesMap.get(data.user_id) || null
@@ -158,7 +158,7 @@ const Index = () => {
       setTimeout(() => {
         setSearchParams({}, { replace: true });
       }, 500);
-      
+
       setTimeout(() => {
         setHighlightedSolicitudId(null);
       }, 3000);
@@ -184,17 +184,18 @@ const Index = () => {
       const offset = isInitial ? 0 : solicitudes.length;
 
       const { data: solicitudesData, error: solicitudesError } = await supabase
-  .from("solicitudes")
-  .select(`
+        .from("solicitudes")
+        .select(`
     *,
     likes:likes!likes_solicitud_id_fkey (user_id),
     comentarios:comentarios!comentarios_solicitud_id_fkey (id),
     respuestas:respuestas!fk_respuestas_solicitud (id)
   `)
-  .order("created_at", { ascending: false })
-  .range(offset, offset + ITEMS_PER_PAGE - 1);
+        .eq("user_id", user?.id)
+        .order("created_at", { ascending: false })
+        .range(offset, offset + ITEMS_PER_PAGE - 1);
 
-if (solicitudesError) throw solicitudesError;
+      if (solicitudesError) throw solicitudesError;
 
       // Verificar si hay más resultados
       setHasMore((solicitudesData?.length || 0) === ITEMS_PER_PAGE);
@@ -290,7 +291,7 @@ if (solicitudesError) throw solicitudesError;
       <main className="pt-20">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            
+
             {/* Left Sidebar */}
             <aside className="hidden lg:block">
               <div className="sticky top-[88px] space-y-1">
@@ -299,8 +300,8 @@ if (solicitudesError) throw solicitudesError;
                   <a href="#" className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary transition-colors">
                     <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center overflow-hidden">
                       {profile?.avatar_url ? (
-                        <img 
-                          src={profile.avatar_url} 
+                        <img
+                          src={profile.avatar_url}
                           alt={displayName}
                           className="w-full h-full object-cover"
                         />
@@ -337,7 +338,7 @@ if (solicitudesError) throw solicitudesError;
                   </a>
                 ))}
 
-                <button 
+                <button
                   onClick={() => setShowMoreLinks(!showMoreLinks)}
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary transition-colors w-full text-left"
                 >
@@ -385,8 +386,8 @@ if (solicitudesError) throw solicitudesError;
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center overflow-hidden">
                     {profile?.avatar_url ? (
-                      <img 
-                        src={profile.avatar_url} 
+                      <img
+                        src={profile.avatar_url}
                         alt={displayName}
                         className="w-full h-full object-cover"
                       />
@@ -396,7 +397,7 @@ if (solicitudesError) throw solicitudesError;
                       </span>
                     )}
                   </div>
-                  <button 
+                  <button
                     onClick={() => user ? setShowCreateModal(true) : navigate("/auth")}
                     className="flex-1 text-left px-4 py-2.5 bg-secondary rounded-full text-muted-foreground hover:bg-secondary/80 transition-colors"
                   >
@@ -405,7 +406,7 @@ if (solicitudesError) throw solicitudesError;
                 </div>
                 <hr className="my-3 border-border" />
                 <div className="flex items-center justify-center gap-4">
-                  <button 
+                  <button
                     onClick={() => user ? setShowCreateModal(true) : navigate("/auth")}
                     className="flex items-center gap-2 px-6 py-2 rounded-lg hover:bg-secondary transition-colors"
                   >
@@ -414,7 +415,7 @@ if (solicitudesError) throw solicitudesError;
                       Solicitud
                     </span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => user ? setShowCreateModal(true) : navigate("/auth")}
                     className="flex items-center gap-2 px-6 py-2 rounded-lg hover:bg-secondary transition-colors"
                   >
@@ -446,7 +447,7 @@ if (solicitudesError) throw solicitudesError;
                     const isHighlighted = highlightedSolicitudId === solicitud.id;
 
                     return (
-                      <div 
+                      <div
                         key={solicitud.id}
                         ref={(el) => {
                           if (el) solicitudRefs.current.set(solicitud.id, el);
@@ -481,7 +482,7 @@ if (solicitudesError) throw solicitudesError;
                       </div>
                     );
                   })}
-                  
+
                   {/* Load More Button */}
                   {hasMore && (
                     <button
@@ -528,14 +529,14 @@ if (solicitudesError) throw solicitudesError;
                         <p className="text-xs text-muted-foreground">puntos</p>
                       </div>
                     </div>
-                    
-                    <LevelProgress 
-                      currentPoints={userPoints} 
-                      currentLevel={(profile?.level as Level) || "novato"} 
+
+                    <LevelProgress
+                      currentPoints={userPoints}
+                      currentLevel={(profile?.level as Level) || "novato"}
                     />
-                    
+
                     <hr className="my-4 border-border" />
-                    
+
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Check-in diario</span>
@@ -547,7 +548,7 @@ if (solicitudesError) throw solicitudesError;
                       </div>
                     </div>
                     <div className="mt-4">
-                      <DailyCheckin onSuccess={() => {}} />
+                      <DailyCheckin onSuccess={() => { }} />
                     </div>
                   </div>
                 )}
